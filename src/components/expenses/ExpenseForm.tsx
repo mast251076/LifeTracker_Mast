@@ -8,6 +8,7 @@ import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
 import { Expense, ExpenseCategory, ExpenseSubCategory } from '@/types';
 import { storage } from '@/lib/storage';
+import { generateId } from '@/lib/uuid';
 
 interface ExpenseFormProps {
     initialData?: Expense;
@@ -34,7 +35,7 @@ export function ExpenseForm({ initialData, onSuccess, onCancel }: ExpenseFormPro
 
         try {
             const newExpense: Expense = {
-                id: initialData?.id || crypto.randomUUID(),
+                id: initialData?.id || generateId('exp'),
                 amount: {
                     amount: Number(formData.amount?.amount),
                     currency: 'INR'

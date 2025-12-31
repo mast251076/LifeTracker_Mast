@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { Card, CardContent } from '@/components/ui/Card';
 import { IncomeSource, IncomeType, IncomeFrequency } from '@/types';
 import { storage } from '@/lib/storage';
+import { generateId } from '@/lib/uuid';
 
 interface IncomeFormProps {
     initialData?: IncomeSource;
@@ -35,7 +36,7 @@ export function IncomeForm({ initialData, onSuccess, onCancel }: IncomeFormProps
 
         try {
             const newIncome: IncomeSource = {
-                id: initialData?.id || crypto.randomUUID(),
+                id: initialData?.id || generateId('inc'),
                 name: formData.name!,
                 type: formData.type as IncomeType,
                 amount: {

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/Label';
 import { Select } from '@/components/ui/Select';
 import { RetirementAsset, AssetStatus } from '@/types';
 import { storage } from '@/lib/storage';
+import { generateId } from '@/lib/uuid';
 
 interface RetirementFormProps {
     initialData?: RetirementAsset;
@@ -61,7 +62,7 @@ export function RetirementForm({ initialData, onSuccess, onCancel }: RetirementF
             }
 
             const updatedAsset: RetirementAsset = {
-                id: initialData?.id || crypto.randomUUID(),
+                id: initialData?.id || generateId('ret'),
                 type: 'RETIREMENT',
                 name: formData.name,
                 ownership: initialData?.ownership || 'SELF',

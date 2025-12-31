@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/Label';
 import { Select } from '@/components/ui/Select';
 import { Modal } from '@/components/ui/Modal';
 import { storage } from '@/lib/storage';
+import { generateId } from '@/lib/uuid';
 import { Badge } from '@/components/ui/Badge';
 import { AppDocument, DocumentCategory } from '@/types';
 import { FileText, Plus, Search, Calendar, Landmark, Shield, Car, Home, MoreVertical, Trash2, LayoutGrid, List, Paperclip, Download, Pencil, FileCode } from 'lucide-react';
@@ -51,6 +52,7 @@ export default function DocumentsPage() {
     const [selectedFiles, setSelectedFiles] = useState<{ name: string, type: string, size: number, data: string }[]>([]);
 
     useEffect(() => {
+        setMounted(true);
         loadData();
     }, []);
 
@@ -89,7 +91,7 @@ export default function DocumentsPage() {
         e.preventDefault();
         const existingAttachments = editingDoc?.attachments || [];
         const newDoc: AppDocument = {
-            id: editingDoc?.id || crypto.randomUUID(),
+            id: editingDoc?.id || generateId('doc'),
             title: formData.title || 'Untitled Document',
             category: formData.category as DocumentCategory || 'OTHER',
             documentNumber: formData.documentNumber,
@@ -137,6 +139,8 @@ export default function DocumentsPage() {
         const matchesCategory = selectedCategory === 'ALL' || doc.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
+
+    if (!mounted) return null;
 
     return (
         <Layout>

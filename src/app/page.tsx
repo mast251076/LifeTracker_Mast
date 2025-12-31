@@ -22,8 +22,10 @@ export default function Dashboard() {
   const router = useRouter();
   const [data, setData] = useState<AppData | null>(null);
   const [viewMode, setViewMode] = useState<'GRID' | 'LIST'>('LIST');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // Initialize data if empty (Simulator logic)
     const existing = storage.getAppData();
     if (!existing || !existing.profile.isSetupComplete) {
@@ -34,7 +36,7 @@ export default function Dashboard() {
     }
   }, []);
 
-  if (!data) return null;
+  if (!mounted || !data) return null;
 
   const totalAssets = data.assets.reduce((sum, item) => sum + item.currentValue.amount, 0);
   const totalLiabilities = data.liabilities.reduce((sum, item) => sum + item.outstandingAmount.amount, 0);

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/Label';
 import { Select } from '@/components/ui/Select';
 import { Modal } from '@/components/ui/Modal';
 import { storage } from '@/lib/storage';
+import { generateId } from '@/lib/uuid';
 import { VaultEntry, VaultCategory } from '@/types';
 import { Lock, Plus, Key, Shield, FileText, Eye, EyeOff, Copy, Trash2, Edit2, CheckCircle2, LayoutGrid, List } from 'lucide-react';
 
@@ -21,11 +22,13 @@ export default function VaultPage() {
     const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [viewMode, setViewMode] = useState<'GRID' | 'LIST'>('GRID');
+    const [mounted, setMounted] = useState(false);
 
     // Form State
     const [formData, setFormData] = useState<Partial<VaultEntry>>({});
 
     useEffect(() => {
+        setMounted(true);
         loadData();
     }, []);
 
@@ -47,7 +50,7 @@ export default function VaultPage() {
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
         const entry: VaultEntry = {
-            id: editingEntry?.id || crypto.randomUUID(),
+            id: editingEntry?.id || generateId('vault'),
             title: formData.title || 'Untitled Entry',
             category: formData.category as VaultCategory || 'OTHER',
             accountName: formData.accountName,
@@ -96,6 +99,8 @@ export default function VaultPage() {
         setEditingEntry(null);
         setFormData({});
     };
+
+    if (!mounted) return null;
 
     if (!isUnlocked) {
         return (
