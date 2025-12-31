@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Layout } from '@/components/ui/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -17,6 +19,7 @@ const DashboardIcon = ({ icon: Icon, className }: { icon: any, className?: strin
 };
 
 export default function Dashboard() {
+  const router = useRouter();
   const [data, setData] = useState<AppData | null>(null);
   const [viewMode, setViewMode] = useState<'GRID' | 'LIST'>('LIST');
 
@@ -152,12 +155,12 @@ export default function Dashboard() {
         {/* Key Metrics Grid (Executive Style) */}
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           {[
-            { label: 'Aggregate Equity', value: formatCurrency(netWorth), icon: Wallet, color: 'text-primary', change: '+12.4%', changeType: 'UP' },
-            { label: 'Asset Nodes', value: formatCurrency(totalAssets), icon: Building, color: 'text-emerald-500', sub: `${data.assets.length} Active Positions` },
-            { label: 'Liability Index', value: formatCurrency(totalLiabilities), icon: CreditCard, color: 'text-red-500', sub: `DSR: ${Math.round((totalLiabilities / (totalAssets || 1)) * 100)}% Velocity` },
-            { label: 'Vault Quant', value: data.vaultEntries.length, icon: Lock, color: 'text-blue-500', sub: `${data.documents.length} Encrypted Records` }
+            { label: 'Aggregate Equity', value: formatCurrency(netWorth), icon: Wallet, color: 'text-primary', change: '+12.4%', changeType: 'UP', path: '/assets' },
+            { label: 'Asset Nodes', value: formatCurrency(totalAssets), icon: Building, color: 'text-emerald-500', sub: `${data.assets.length} Active Positions`, path: '/assets' },
+            { label: 'Liability Index', value: formatCurrency(totalLiabilities), icon: CreditCard, color: 'text-red-500', sub: `DSR: ${Math.round((totalLiabilities / (totalAssets || 1)) * 100)}% Velocity`, path: '/liabilities' },
+            { label: 'Vault Quant', value: data.vaultEntries.length, icon: Lock, color: 'text-blue-500', sub: `${data.documents.length} Encrypted Records`, path: '/documents' }
           ].map((m, i) => (
-            <Card key={i} className="glass-card p-3 border-none flex flex-col justify-between h-24 border-l-2 border-l-white/10 hover:border-l-primary/60 transition-all">
+            <Card key={i} onClick={() => router.push(m.path)} className="glass-card p-3 border-none flex flex-col justify-between h-24 border-l-2 border-l-white/10 hover:border-l-primary/60 hover:bg-white/5 cursor-pointer transition-all active:scale-[0.98]">
               <div className="flex items-center justify-between">
                 <span className="fin-label text-[9px]">{m.label}</span>
                 <m.icon className={`h-3 w-3 ${m.color} opacity-40`} />
@@ -183,9 +186,9 @@ export default function Dashboard() {
           <Card className="lg:col-span-8 glass-card border-none p-0 overflow-hidden flex flex-col">
             <div className="p-3 border-b border-white/5 flex items-center justify-between bg-white/5">
               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Portfolio Architecture</h3>
-              <div className="text-[9px] font-black text-primary uppercase tracking-widest cursor-pointer hover:text-white transition-colors flex items-center">
-                Expand Matrix <ArrowUpRight className="h-2.5 w-2.5 ml-1" />
-              </div>
+              <Link href="/assets" className="text-[9px] font-black text-primary uppercase tracking-widest cursor-pointer hover:text-white transition-colors flex items-center group/exp">
+                Expand Matrix <ArrowUpRight className="h-2.5 w-2.5 ml-1 group-hover/exp:translate-x-0.5 group-hover/exp:-translate-y-0.5 transition-transform" />
+              </Link>
             </div>
             <CardContent className="p-0 flex-1">
               {viewMode === 'LIST' ? (
@@ -238,12 +241,12 @@ export default function Dashboard() {
             </div>
             <CardContent className="p-1 flex-1">
               {[
-                { label: 'Register Asset Node', icon: Building, color: 'text-primary', bg: 'bg-primary/5' },
-                { label: 'Log Financial Entropy', icon: ArrowDownRight, color: 'text-orange-500', bg: 'bg-orange-500/5' },
-                { label: 'Ingest Secure Document', icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/5' },
-                { label: 'Sync System Params', icon: Settings, color: 'text-purple-500', bg: 'bg-purple-500/5' }
+                { label: 'Register Asset Node', icon: Building, color: 'text-primary', bg: 'bg-primary/5', path: '/assets' },
+                { label: 'Log Financial Entropy', icon: ArrowDownRight, color: 'text-orange-500', bg: 'bg-orange-500/5', path: '/expenses' },
+                { label: 'Ingest Secure Document', icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/5', path: '/documents' },
+                { label: 'Sync System Params', icon: Settings, color: 'text-purple-500', bg: 'bg-purple-500/5', path: '/settings' }
               ].map((action, i) => (
-                <div key={i} className="flex items-center justify-between p-2 rounded hover:bg-white/5 cursor-pointer transition-all group">
+                <div key={i} onClick={() => router.push(action.path)} className="flex items-center justify-between p-2 rounded hover:bg-white/5 cursor-pointer transition-all group active:scale-[0.99]">
                   <div className="flex items-center space-x-2.5 min-w-0">
                     <div className={`p-1.5 rounded ${action.bg} ${action.color} group-hover:scale-105 transition-transform`}>
                       <DashboardIcon icon={action.icon} className="h-3 w-3" />

@@ -272,7 +272,13 @@ export interface AppDocument {
     issuer?: string;
     notes?: string;
     lastUpdated: string;
-    attachmentIds?: string[]; // IDs for future file storage
+    attachmentIds?: string[];
+    attachments?: {
+        name: string;
+        type: string;
+        size: number;
+        data: string; // Base64
+    }[];
 }
 
 export type VaultCategory = 'PASSWORD' | 'BANK_PIN' | 'SECRET_NOTE' | 'RECOVERY_PHRASE' | 'OTHER';

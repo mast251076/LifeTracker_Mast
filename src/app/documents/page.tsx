@@ -11,7 +11,7 @@ import { Modal } from '@/components/ui/Modal';
 import { storage } from '@/lib/storage';
 import { Badge } from '@/components/ui/Badge';
 import { AppDocument, DocumentCategory } from '@/types';
-import { FileText, Plus, Search, Calendar, Landmark, Shield, Car, Home, MoreVertical, Trash2, Edit2, LayoutGrid, List } from 'lucide-react';
+import { FileText, Plus, Search, Calendar, Landmark, Shield, Car, Home, MoreVertical, Trash2, LayoutGrid, List, Paperclip, Download, Pencil, FileCode } from 'lucide-react';
 
 const CATEGORY_ICONS: Record<DocumentCategory, any> = {
     IDENTITY: Shield,
@@ -48,6 +48,7 @@ export default function DocumentsPage() {
 
     // Form State
     const [formData, setFormData] = useState<Partial<AppDocument>>({});
+    const [selectedFiles, setSelectedFiles] = useState<{ name: string, type: string, size: number, data: string }[]>([]);
 
     useEffect(() => {
         loadData();
@@ -58,8 +59,35 @@ export default function DocumentsPage() {
         setDocuments(data.documents || []);
     };
 
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files) return;
+
+        const newFiles: { name: string, type: string, size: number, data: string }[] = [];
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            const filePromise = new Promise<{ name: string, type: string, size: number, data: string }>((resolve) => {
+                reader.onload = (e) => {
+                    resolve({
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        data: e.target?.result as string
+                    });
+                };
+                reader.readAsDataURL(file);
+            });
+            newFiles.push(await filePromise);
+        }
+
+        setSelectedFiles([...selectedFiles, ...newFiles]);
+    };
+
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
+        const existingAttachments = editingDoc?.attachments || [];
         const newDoc: AppDocument = {
             id: editingDoc?.id || crypto.randomUUID(),
             title: formData.title || 'Untitled Document',
@@ -69,6 +97,7 @@ export default function DocumentsPage() {
             issuer: formData.issuer,
             notes: formData.notes,
             lastUpdated: new Date().toISOString(),
+            attachments: [...existingAttachments, ...selectedFiles]
         };
 
         storage.updateDocument(newDoc);
@@ -99,6 +128,7 @@ export default function DocumentsPage() {
         setIsModalOpen(false);
         setEditingDoc(null);
         setFormData({});
+        setSelectedFiles([]);
     };
 
     const filteredDocs = documents.filter(doc => {
@@ -151,18 +181,18 @@ export default function DocumentsPage() {
                         <Button
                             variant={viewMode === 'GRID' ? 'secondary' : 'ghost'}
                             size="sm"
-                            className="h-6 w-6 p-0 rounded-md"
+                            className="h-7 w-7 p-0 rounded-md"
                             onClick={() => setViewMode('GRID')}
                         >
-                            <LayoutGrid className="h-3 w-3" />
+                            <LayoutGrid className="h-3.5 w-3.5" />
                         </Button>
                         <Button
                             variant={viewMode === 'LIST' ? 'secondary' : 'ghost'}
                             size="sm"
-                            className="h-6 w-6 p-0 rounded-md"
+                            className="h-7 w-7 p-0 rounded-md"
                             onClick={() => setViewMode('LIST')}
                         >
-                            <List className="h-3 w-3" />
+                            <List className="h-3.5 w-3.5" />
                         </Button>
                     </div>
                 </div>
@@ -205,9 +235,20 @@ export default function DocumentsPage() {
                                                 </span>
                                             </div>
                                             <div className="flex items-center mt-2 pt-2 border-t border-white/5 gap-1">
-                                                <button onClick={() => openEdit(doc)} className="flex-1 text-[9px] font-black uppercase bg-white/5 py-1 rounded hover:bg-white/10 text-white/50">Details</button>
-                                                <button onClick={() => handleDelete(doc.id)} className="px-2 text-[9px] font-black uppercase text-red-500/50 hover:text-red-500">Purge</button>
+                                                <button onClick={() => openEdit(doc)} className="flex-1 flex items-center justify-center gap-1.5 text-[9px] font-black uppercase bg-white/5 py-1 rounded hover:bg-white/10 text-white/50 hover:text-white transition-all">
+                                                    <Pencil className="h-2.5 w-2.5" /> Details
+                                                </button>
+                                                <button onClick={() => handleDelete(doc.id)} className="px-2 flex items-center justify-center gap-1.5 text-[9px] font-black uppercase text-red-500/50 hover:text-red-500 transition-all">
+                                                    <Trash2 className="h-3 w-3" />
+                                                </button>
                                             </div>
+                                            {doc.attachments && doc.attachments.length > 0 && (
+                                                <div className="absolute top-12 right-3">
+                                                    <Badge className="bg-blue-500/20 text-blue-500 border-none text-[8px] h-4 px-1 leading-none font-black">
+                                                        <Paperclip className="h-2 w-2 mr-0.5" /> {doc.attachments.length}
+                                                    </Badge>
+                                                </div>
+                                            )}
                                         </div>
                                     </Card>
                                 );
@@ -249,8 +290,8 @@ export default function DocumentsPage() {
                                                 </td>
                                                 <td className="px-4 py-0 text-right">
                                                     <div className="flex justify-end space-x-2">
-                                                        <button onClick={() => openEdit(doc)} className="text-[9px] font-black uppercase text-white/40 hover:text-white transition-colors">Audit</button>
-                                                        <button onClick={() => handleDelete(doc.id)} className="text-[9px] font-black uppercase text-red-500/40 hover:text-red-500 transition-colors">Purge</button>
+                                                        <button onClick={() => openEdit(doc)} className="p-1 hover:text-primary transition-all text-white/40 hover:text-white" title="Audit"><Pencil className="h-3.5 w-3.5" /></button>
+                                                        <button onClick={() => handleDelete(doc.id)} className="p-1 hover:text-red-500 transition-all text-red-500/40 hover:text-red-500" title="Purge"><Trash2 className="h-3.5 w-3.5" /></button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -322,13 +363,72 @@ export default function DocumentsPage() {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <Label>Notes (Optional)</Label>
-                        <Input
-                            value={formData.notes}
-                            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                            placeholder="Additional details..."
-                        />
+                    <div className="space-y-3">
+                        <Label className="text-[10px] uppercase font-black tracking-widest text-white/40">File Repository (PDF, Word, Images)</Label>
+                        <div className="grid grid-cols-1 gap-2">
+                            {/* Existing Files */}
+                            {editingDoc?.attachments?.map((file, idx) => (
+                                <div key={`exist-${idx}`} className="flex items-center justify-between p-2 rounded bg-white/5 border border-white/5">
+                                    <div className="flex items-center space-x-3 overflow-hidden">
+                                        <FileCode className="h-4 w-4 text-blue-400 shrink-0" />
+                                        <div className="min-w-0">
+                                            <p className="text-[11px] font-bold text-white/80 truncate">{file.name}</p>
+                                            <p className="text-[9px] text-white/30 font-mono uppercase">{(file.size / 1024).toFixed(1)} KB | {file.type.split('/')[1] || 'DOC'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                        <a href={file.data} download={file.name} className="p-1.5 hover:bg-white/10 rounded text-blue-400" title="Download">
+                                            <Download className="h-3.5 w-3.5" />
+                                        </a>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const updated = editingDoc.attachments!.filter((_, i) => i !== idx);
+                                                storage.updateDocument({ ...editingDoc, attachments: updated });
+                                                loadData();
+                                                closeModal();
+                                            }}
+                                            className="p-1.5 hover:bg-red-500/10 rounded text-red-500/50 hover:text-red-500"
+                                        >
+                                            <Trash2 className="h-3.5 w-3.5" />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+
+                            {/* Selected for Upload */}
+                            {selectedFiles.map((file, idx) => (
+                                <div key={`new-${idx}`} className="flex items-center justify-between p-2 rounded bg-blue-500/5 border border-blue-500/10 border-dashed">
+                                    <div className="flex items-center space-x-3 overflow-hidden">
+                                        <Paperclip className="h-4 w-4 text-blue-400 shrink-0" />
+                                        <div className="min-w-0">
+                                            <p className="text-[11px] font-bold text-blue-400 truncate tracking-tight">{file.name}</p>
+                                            <p className="text-[9px] text-blue-500/40 font-mono uppercase">Queued for Ingestion</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setSelectedFiles(selectedFiles.filter((_, i) => i !== idx))}
+                                        className="p-1.5 hover:bg-red-500/10 rounded text-red-500/50 hover:text-red-500"
+                                    >
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                    </button>
+                                </div>
+                            ))}
+
+                            {/* Upload Button */}
+                            <label className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-white/5 rounded-xl hover:border-blue-500/40 hover:bg-blue-500/5 cursor-pointer transition-all group">
+                                <Plus className="h-5 w-5 text-white/20 group-hover:text-blue-500 transition-colors" />
+                                <span className="text-[10px] font-black uppercase text-white/30 group-hover:text-blue-500 mt-1">Select Files Matrix</span>
+                                <input
+                                    type="file"
+                                    multiple
+                                    className="hidden"
+                                    onChange={handleFileChange}
+                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+                                />
+                            </label>
+                        </div>
                     </div>
 
                     <div className="flex justify-end gap-2 pt-4">
