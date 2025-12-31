@@ -52,109 +52,104 @@ export default function ExpensesPage() {
 
     return (
         <Layout>
-            <div className="flex flex-col space-y-8 animate-in fade-in duration-500">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col space-y-4 animate-in fade-in duration-500">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-4">
                     <div>
-                        <h2 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">Expense Log</h2>
-                        <p className="text-muted-foreground mt-1">Monitor your spending habits and keep your budget on track.</p>
+                        <h2 className="text-2xl font-black tracking-tight text-white">Expense Log</h2>
+                        <p className="text-muted-foreground mt-0.5 text-[11px] font-medium uppercase tracking-wider opacity-60 flex items-center">
+                            <List className="h-3 w-3 mr-1.5" /> Transactional Entropy Monitor
+                        </p>
                     </div>
-                    <Button onClick={openAdd} className="h-11 px-6 rounded-xl transition-all hover:scale-105 active:scale-95 shadow-lg shadow-amber-500/20 bg-amber-600 hover:bg-amber-700">
-                        <Plus className="mr-2 h-5 w-5" /> Log New Expense
+                    <Button onClick={openAdd} className="h-8 px-4 rounded-lg bg-orange-600 hover:bg-orange-700 text-[11px] font-black uppercase tracking-wider shadow-none">
+                        <Plus className="mr-1.5 h-3.5 w-3.5" /> Log Expense
                     </Button>
                 </div>
 
-                <div className="flex items-center justify-between glass-card p-4 rounded-2xl border-none">
-                    <div className="flex items-center space-x-2 bg-muted/40 p-1.5 rounded-xl border border-white/5">
+                <div className="flex items-center justify-between bg-white/5 p-2 rounded-xl border border-white/5">
+                    <div className="flex items-center space-x-1 bg-black/20 p-1 rounded-lg border border-white/5">
                         <Button
                             variant={viewMode === 'GRID' ? 'secondary' : 'ghost'}
                             size="sm"
-                            className="h-8 w-8 p-0 rounded-lg"
+                            className="h-7 w-7 p-0 rounded-md"
                             onClick={() => setViewMode('GRID')}
                         >
-                            <LayoutGrid className="h-4 w-4" />
+                            <LayoutGrid className="h-3.5 w-3.5" />
                         </Button>
                         <Button
                             variant={viewMode === 'LIST' ? 'secondary' : 'ghost'}
                             size="sm"
-                            className="h-8 w-8 p-0 rounded-lg"
+                            className="h-7 w-7 p-0 rounded-md"
                             onClick={() => setViewMode('LIST')}
                         >
-                            <List className="h-4 w-4" />
+                            <List className="h-3.5 w-3.5" />
                         </Button>
                     </div>
                 </div>
 
                 {viewMode === 'LIST' ? (
-                    <div className="grid gap-4">
-                        {expenses.length === 0 ? (
-                            <div className="py-20 text-center glass-card border-dashed rounded-2xl flex flex-col items-center justify-center space-y-4">
-                                <div className="p-4 rounded-full bg-amber-500/10">
-                                    <Plus className="h-8 w-8 text-amber-500" />
-                                </div>
-                                <h3 className="text-lg font-bold">No expenses logged</h3>
-                                <p className="text-muted-foreground max-w-sm">Every penny counts. Start logging your daily expenses to gain financial clarity.</p>
-                            </div>
-                        ) : (
-                            expenses.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(exp => (
-                                <div key={exp.id} className="glass-card group flex items-center justify-between p-5 rounded-2xl border-none transition-all duration-300 hover:bg-white/5 active:scale-[0.99] relative overflow-hidden">
-                                    <div className="absolute left-0 top-0 w-1 h-full bg-amber-500/30" />
-                                    <div className="flex items-center space-x-5">
-                                        <div className="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex flex-col items-center justify-center">
-                                            <span className="text-[10px] font-black leading-none opacity-50 mb-0.5">{new Date(exp.date).toLocaleString('default', { month: 'short' }).toUpperCase()}</span>
-                                            <span className="text-lg font-black leading-none">{new Date(exp.date).getDate()}</span>
-                                        </div>
-                                        <div>
-                                            <h4 className="font-extrabold text-lg tracking-tight group-hover:text-amber-400 transition-colors">{exp.merchant || exp.category}</h4>
-                                            <div className="flex items-center space-x-2 mt-1">
-                                                <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-widest bg-muted/50 border-white/5 rounded-lg py-0 px-2 h-5">
+                    <div className="bg-white/5 border border-white/5 rounded-lg overflow-hidden">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-white/10 border-b border-white/5">
+                                    <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground">Timestamp</th>
+                                    <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground">Entity / Category</th>
+                                    <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground">Sector</th>
+                                    <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground text-right">Debit Amount</th>
+                                    <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground text-right">Cmd</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {expenses.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={5} className="py-12 text-center text-white/20 text-xs font-black uppercase tracking-[0.3em]">No Logged Entropy</td>
+                                    </tr>
+                                ) : (
+                                    expenses.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(exp => (
+                                        <tr key={exp.id} className="zebra-row hover:bg-white/10 group h-10">
+                                            <td className="px-4 py-0">
+                                                <div className="text-[10px] font-black text-white/40">{new Date(exp.date).toLocaleDateString()}</div>
+                                            </td>
+                                            <td className="px-4 py-0">
+                                                <div className="text-[11px] font-bold text-white/90">{exp.merchant || exp.category}</div>
+                                                <div className="text-[9px] text-white/30 uppercase font-black">{exp.subCategory}</div>
+                                            </td>
+                                            <td className="px-4 py-0">
+                                                <Badge variant="outline" className="text-[8px] font-black uppercase tracking-tighter border-white/10 h-4 px-1 leading-none">
                                                     {exp.category}
                                                 </Badge>
-                                                <span className="text-xs text-muted-foreground font-medium opacity-60">• {exp.subCategory}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center space-x-8">
-                                        <div className="text-right">
-                                            <div className="text-xl font-black text-amber-500 tabular-nums">- {exp.amount.currency} {exp.amount.amount.toLocaleString()}</div>
-                                            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-60">Source: {exp.paymentInstrumentId === 'cash' ? 'Cash' : 'Primary Account'}</div>
-                                        </div>
-                                        <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity translate-x-4 group-hover:translate-x-0">
-                                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-white/10" onClick={() => openEdit(exp)}>
-                                                <span className="text-[10px] font-bold font-mono">EDIT</span>
-                                            </Button>
-                                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive" onClick={() => handleDelete(exp.id)}>
-                                                <span className="text-[10px] font-bold font-mono">DEL</span>
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        )}
+                                            </td>
+                                            <td className="px-4 py-0 text-right font-black tabular-nums text-orange-500 text-[11px]">
+                                                - {exp.amount.currency} {exp.amount.amount.toLocaleString()}
+                                            </td>
+                                            <td className="px-4 py-0 text-right">
+                                                <div className="flex justify-end space-x-2">
+                                                    <button onClick={() => openEdit(exp)} className="text-[9px] font-black uppercase text-white/40 hover:text-white transition-colors">Audit</button>
+                                                    <button onClick={() => handleDelete(exp.id)} className="text-[9px] font-black uppercase text-red-500/40 hover:text-red-500 transition-colors">Flush</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 ) : (
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
                         {expenses.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(exp => (
-                            <Card key={exp.id} className="glass-card group hover:bg-card/80 transition-all duration-300 border-none relative overflow-hidden flex flex-col pt-2">
-                                <CardHeader className="pb-2">
-                                    <div className="flex items-center justify-between">
-                                        <CardTitle className="text-lg font-bold truncate max-w-[150px]">{exp.merchant || exp.category}</CardTitle>
-                                        <div className="text-xs font-black text-amber-500 tabular-nums">-{exp.amount.amount.toLocaleString()}</div>
+                            <Card key={exp.id} className="glass-card group p-2 border-none flex flex-col justify-between h-28 border-l-2 border-l-orange-500/40">
+                                <div>
+                                    <div className="text-[8px] font-black text-white/30 uppercase mb-0.5">{new Date(exp.date).toLocaleDateString()}</div>
+                                    <h3 className="text-[10px] font-black text-white truncate">{exp.merchant || exp.category}</h3>
+                                </div>
+                                <div className="mt-auto">
+                                    <div className="text-xs fin-data text-orange-500">
+                                        -{exp.amount.amount.toLocaleString()}
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-widest bg-amber-500/5 text-amber-500 border-amber-500/20 rounded-lg">
-                                            {exp.category}
-                                        </Badge>
-                                        <span className="text-[10px] text-muted-foreground">{new Date(exp.date).toLocaleDateString()}</span>
+                                    <div className="flex items-center mt-1.5 pt-1.5 border-t border-white/5 justify-between">
+                                        <button onClick={() => openEdit(exp)} className="text-[8px] font-black uppercase text-white/40 hover:text-white">Audit</button>
+                                        <button onClick={() => handleDelete(exp.id)} className="text-[8px] font-black uppercase text-red-500/40 hover:text-red-500">Del</button>
                                     </div>
-                                </CardHeader>
-                                <CardContent className="flex-1 flex flex-col justify-between pt-4">
-                                    <p className="text-xs text-muted-foreground line-clamp-2 italic">Managed via {exp.paymentInstrumentId === 'cash' ? 'Cash' : 'Bank'}</p>
-                                    <div className="mt-6 flex items-center justify-between gap-2">
-                                        <Button variant="secondary" size="sm" className="flex-1 rounded-xl text-xs font-bold" onClick={() => openEdit(exp)}>View</Button>
-                                        <Button variant="ghost" size="sm" className="rounded-xl text-xs font-bold text-destructive hover:bg-destructive/10" onClick={() => handleDelete(exp.id)}>Flush</Button>
-                                    </div>
-                                </CardContent>
-                                <div className="h-1 w-full bg-gradient-to-r from-amber-500/50 to-transparent absolute bottom-0" />
+                                </div>
                             </Card>
                         ))}
                     </div>

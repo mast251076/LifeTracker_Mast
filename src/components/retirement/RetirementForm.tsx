@@ -9,22 +9,23 @@ import { RetirementAsset, AssetStatus } from '@/types';
 import { storage } from '@/lib/storage';
 
 interface RetirementFormProps {
+    initialData?: RetirementAsset;
     onSuccess: () => void;
     onCancel: () => void;
 }
 
-export function RetirementForm({ onSuccess, onCancel }: RetirementFormProps) {
+export function RetirementForm({ initialData, onSuccess, onCancel }: RetirementFormProps) {
     const [loading, setLoading] = useState(false);
-    const [schemeType, setSchemeType] = useState<'EPF' | 'PPF' | 'NPS' | 'SSY' | 'OTHER'>('EPF');
+    const [schemeType, setSchemeType] = useState<'EPF' | 'PPF' | 'NPS' | 'SSY' | 'GRAVITY' | 'OTHER'>(initialData?.details?.schemeType || 'EPF');
     const [formData, setFormData] = useState<any>({
-        name: 'Employee Provident Fund',
-        currentValue: 0,
-        uan: '',
-        pran: '',
-        employeeContrib: 0,
-        employerContrib: 0,
-        tier1: 0,
-        tier2: 0,
+        name: initialData?.name || 'Employee Provident Fund',
+        currentValue: initialData?.currentValue?.amount || 0,
+        uan: (initialData as any)?.details?.uan || '',
+        pran: (initialData as any)?.details?.pran || '',
+        employeeContrib: (initialData as any)?.details?.employeeContribution?.amount || 0,
+        employerContrib: (initialData as any)?.details?.employerContribution?.amount || 0,
+        tier1: (initialData as any)?.details?.tier1Balance?.amount || 0,
+        tier2: (initialData as any)?.details?.tier2Balance?.amount || 0,
     });
 
     const handleTypeChange = (type: string) => {
@@ -59,12 +60,12 @@ export function RetirementForm({ onSuccess, onCancel }: RetirementFormProps) {
                 details.tier2Balance = { amount: Number(formData.tier2), currency: 'INR' };
             }
 
-            const newAsset: RetirementAsset = {
-                id: crypto.randomUUID(),
+            const updatedAsset: RetirementAsset = {
+                id: initialData?.id || crypto.randomUUID(),
                 type: 'RETIREMENT',
                 name: formData.name,
-                ownership: 'SELF', // Default
-                status: 'ACTIVE',
+                ownership: initialData?.ownership || 'SELF',
+                status: initialData?.status || 'ACTIVE',
                 currentValue: { amount: Number(formData.currentValue), currency: 'INR' },
                 lastUpdated: new Date().toISOString(),
                 details: details
@@ -72,8 +73,12 @@ export function RetirementForm({ onSuccess, onCancel }: RetirementFormProps) {
 
             const data = storage.getAppData();
             if (data) {
-                const updatedAssets = [...(data.assets || []), newAsset];
-                storage.saveAppData({ ...data, assets: updatedAssets });
+                if (initialData) {
+                    storage.updateAsset(updatedAsset);
+                } else {
+                    const updatedAssets = [...(data.assets || []), updatedAsset];
+                    storage.saveAppData({ ...data, assets: updatedAssets });
+                }
                 onSuccess();
             }
         } catch (error) {
@@ -96,6 +101,7 @@ export function RetirementForm({ onSuccess, onCancel }: RetirementFormProps) {
                     <option value="PPF">PPF (Public Provident Fund)</option>
                     <option value="NPS">NPS (National Pension System)</option>
                     <option value="SSY">SSY (Sukanya Samriddhi)</option>
+                    <option value="GRAVITY">GRAVITY (Fixed Deposit/Other)</option>
                     <option value="OTHER">Other</option>
                 </Select>
             </div>
@@ -193,7 +199,7 @@ export function RetirementForm({ onSuccess, onCancel }: RetirementFormProps) {
             <div className="flex justify-end space-x-2 pt-4">
                 <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
                 <Button type="submit" disabled={loading}>
-                    {loading ? 'Saving...' : 'Add Retirement Asset'}
+                    {loading ? 'Saving...' : (initialData ? 'Update Scheme' : 'Add Retirement Asset')}
                 </Button>
             </div>
         </form>

@@ -9,7 +9,7 @@ import { Modal } from '@/components/ui/Modal';
 import { IncomeForm } from '@/components/income/IncomeForm';
 import { IncomeSource } from '@/types';
 import { storage } from '@/lib/storage';
-import { Plus, TrendingUp, Calendar, ArrowRight, LayoutGrid, List } from 'lucide-react';
+import { Plus, TrendingUp, Calendar, ArrowRight, LayoutGrid, List, Pencil, Trash2 } from 'lucide-react';
 
 export default function IncomePage() {
     const [incomes, setIncomes] = useState<IncomeSource[]>([]);
@@ -58,135 +58,125 @@ export default function IncomePage() {
 
     return (
         <Layout>
-            <div className="flex flex-col space-y-8 animate-in fade-in duration-500">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col space-y-4 animate-in fade-in duration-500">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-4">
                     <div>
-                        <h2 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">Income Streams</h2>
-                        <p className="text-muted-foreground mt-1">Maximize your cash inflows and track earnings across all channels.</p>
+                        <h2 className="text-2xl font-black tracking-tight text-white">Income Streams</h2>
+                        <p className="text-muted-foreground mt-0.5 text-[11px] font-medium uppercase tracking-wider opacity-60 flex items-center">
+                            <TrendingUp className="h-3 w-3 mr-1.5" /> Cash Inflow Architecture
+                        </p>
                     </div>
-                    <Button onClick={openAdd} className="h-11 px-6 rounded-xl transition-all hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700">
-                        <Plus className="mr-2 h-5 w-5" /> Add Income Source
+                    <Button onClick={openAdd} className="h-8 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-[11px] font-black uppercase tracking-wider shadow-none">
+                        <Plus className="mr-1.5 h-3.5 w-3.5" /> Register Inflow
                     </Button>
                 </div>
 
-                {/* Summary & View Toggle Section */}
-                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="flex items-center space-x-4 w-full md:w-auto">
-                        <div className="flex items-center space-x-2 bg-muted/40 p-1.5 rounded-xl border border-white/5 h-fit">
+                {/* Summary & View Toggle Section (High Density) */}
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                    <div className="lg:col-span-3 flex items-center space-x-3 bg-white/5 rounded-xl p-2 border border-white/5">
+                        <div className="flex items-center space-x-1 bg-black/20 p-1 rounded-lg border border-white/5">
                             <Button
                                 variant={viewMode === 'GRID' ? 'secondary' : 'ghost'}
                                 size="sm"
-                                className="h-8 w-8 p-0 rounded-lg"
+                                className="h-7 w-7 p-0 rounded-md"
                                 onClick={() => setViewMode('GRID')}
                             >
-                                <LayoutGrid className="h-4 w-4" />
+                                <LayoutGrid className="h-3.5 w-3.5" />
                             </Button>
                             <Button
                                 variant={viewMode === 'LIST' ? 'secondary' : 'ghost'}
                                 size="sm"
-                                className="h-8 w-8 p-0 rounded-lg"
+                                className="h-7 w-7 p-0 rounded-md"
                                 onClick={() => setViewMode('LIST')}
                             >
-                                <List className="h-4 w-4" />
+                                <List className="h-3.5 w-3.5" />
                             </Button>
                         </div>
-                    </div>
-
-                    <div className="grid gap-6 md:grid-cols-1 w-full md:w-auto">
-                        <Card className="glass-card group relative overflow-hidden border-none pt-2 min-w-[300px]">
-                            <div className="absolute top-0 left-0 w-2 h-full bg-emerald-500 opacity-50" />
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
-                                <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Estimated Monthly In-Hand</CardTitle>
-                                <TrendingUp className="h-4 w-4 text-emerald-500" />
-                            </CardHeader>
-                            <CardContent className="pb-4">
-                                <div className="text-2xl font-black text-emerald-500 tabular-nums">
+                        <div className="h-4 w-px bg-white/10 mx-2" />
+                        <div className="flex items-center space-x-4">
+                            <div>
+                                <span className="fin-label text-[9px] block">Monthly Velocity</span>
+                                <div className="text-lg fin-data text-emerald-500">
                                     {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(totalMonthlyIncome)}
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 {/* Transition Section */}
                 {viewMode === 'GRID' ? (
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
                         {incomes.length === 0 ? (
-                            <div className="col-span-full py-20 text-center glass-card border-dashed rounded-2xl flex flex-col items-center justify-center space-y-4">
-                                <div className="p-4 rounded-full bg-emerald-500/10">
-                                    <Plus className="h-8 w-8 text-emerald-500" />
-                                </div>
-                                <h3 className="text-lg font-bold">No income streams registered</h3>
-                                <p className="text-muted-foreground max-w-sm">Capture your monthly salary, dividends, or rental income to see your true purchasing power.</p>
+                            <div className="col-span-full py-16 text-center bg-white/5 border border-dashed border-white/10 rounded-xl">
+                                <Plus className="h-8 w-8 text-emerald-500 mx-auto mb-3 opacity-20" />
+                                <h3 className="text-xs font-black uppercase text-white/40 tracking-widest">No Active Streams</h3>
                             </div>
                         ) : (
                             incomes.map((item) => (
-                                <Card key={item.id} className="glass-card group hover:bg-card/80 transition-all duration-300 border-none relative overflow-hidden flex flex-col">
-                                    <CardHeader className="pb-2">
-                                        <div className="flex items-center justify-between">
-                                            <CardTitle className="text-lg font-bold truncate max-w-[180px]">{item.name}</CardTitle>
-                                            <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-widest bg-emerald-500/5 text-emerald-500 border-emerald-500/20 rounded-lg">
-                                                {item.frequency.replace('_', ' ')}
-                                            </Badge>
+                                <Card key={item.id} className="glass-card group p-3 border-none flex flex-col justify-between h-36 border-l-2 border-l-emerald-500/40">
+                                    <div className="flex items-start justify-between">
+                                        <div className="min-w-0">
+                                            <span className="fin-label text-[8px] truncate block opacity-50 mb-0.5">{item.frequency.replace('_', ' ')}</span>
+                                            <h3 className="text-xs font-black text-white truncate group-hover:text-emerald-400 transition-colors">{item.name}</h3>
                                         </div>
-                                        <p className="text-xs text-muted-foreground font-medium uppercase tracking-tighter">
-                                            Type: {item.type.toLowerCase().replace('_', ' ')}
-                                        </p>
-                                    </CardHeader>
-                                    <CardContent className="flex-1 flex flex-col justify-between pt-4">
-                                        <div>
-                                            <div className="text-3xl font-black tabular-nums">{item.amount.currency} {item.amount.amount.toLocaleString()}</div>
-                                            <div className="mt-4 flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-white/5">
-                                                <div className="flex items-center text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                                                    <Calendar className="h-3.5 w-3.5 mr-2 text-emerald-500" />
-                                                    Next Payday
-                                                </div>
-                                                <span className="text-xs font-black">{item.receiveDate ? item.receiveDate + 'th of month' : 'Rolling'}</span>
-                                            </div>
+                                        <div className="flex shrink-0">
+                                            <Calendar className="h-3 w-3 text-white/20" />
                                         </div>
-                                        <div className="mt-6 flex items-center justify-between gap-2">
-                                            <Button variant="secondary" size="sm" className="flex-1 rounded-xl text-xs font-bold" onClick={() => openEdit(item)}>Edit Details</Button>
-                                            <Button variant="ghost" size="sm" className="rounded-xl text-xs font-bold text-destructive hover:bg-destructive/10" onClick={() => handleDelete(item.id)}>Remove</Button>
+                                    </div>
+
+                                    <div className="mt-auto">
+                                        <div className="text-lg fin-data text-white">
+                                            {item.amount.currency} {item.amount.amount.toLocaleString()}
                                         </div>
-                                    </CardContent>
-                                    <div className="h-1 w-full bg-gradient-to-r from-emerald-500/50 to-transparent absolute bottom-0" />
+                                        <div className="flex items-center mt-2 gap-1">
+                                            <button onClick={() => openEdit(item)} className="flex-1 flex items-center justify-center gap-1.5 text-[9px] font-black uppercase tracking-tighter bg-white/5 py-1 rounded hover:bg-white/10 text-white/50 hover:text-white transition-all">
+                                                <Pencil className="h-2.5 w-2.5" /> Edit
+                                            </button>
+                                            <button onClick={() => handleDelete(item.id)} className="px-2 flex items-center justify-center gap-1.5 text-[9px] font-black uppercase tracking-tighter text-red-500/50 hover:text-red-500 transition-all">
+                                                <Trash2 className="h-2.5 w-2.5" /> Delete
+                                            </button>
+                                        </div>
+                                    </div>
                                 </Card>
                             ))
                         )}
                     </div>
                 ) : (
-                    <div className="glass-card border-none rounded-2xl overflow-hidden">
-                        <table className="w-full text-left">
-                            <thead className="bg-muted/30 border-b border-white/5">
-                                <tr>
-                                    <th className="p-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Source Name</th>
-                                    <th className="p-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Type</th>
-                                    <th className="p-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Frequency</th>
-                                    <th className="p-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right">Amount</th>
-                                    <th className="p-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right">Actions</th>
+                    <div className="bg-white/5 border border-white/5 rounded-lg overflow-hidden">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-white/10 border-b border-white/5">
+                                    <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground">Stream Node</th>
+                                    <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground">Modality</th>
+                                    <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground">Frequency</th>
+                                    <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground text-right">Yield</th>
+                                    <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground text-right">Cmd</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
                                 {incomes.map((item) => (
-                                    <tr key={item.id} className="hover:bg-white/5 transition-colors group">
-                                        <td className="p-4 font-bold">{item.name}</td>
-                                        <td className="p-4">
-                                            <span className="text-[10px] font-medium px-2 py-1 rounded-lg bg-muted border border-white/5 uppercase tracking-widest opacity-70">
+                                    <tr key={item.id} className="zebra-row hover:bg-white/10 group h-10">
+                                        <td className="px-4 py-0">
+                                            <div className="text-[11px] font-bold text-white/90">{item.name}</div>
+                                        </td>
+                                        <td className="px-4 py-0">
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-white/40">
                                                 {item.type.toLowerCase()}
                                             </span>
                                         </td>
-                                        <td className="p-4">
-                                            <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-widest bg-emerald-500/5 text-emerald-500 border-emerald-500/20 rounded-lg">
+                                        <td className="px-4 py-0">
+                                            <Badge variant="outline" className="text-[8px] font-black uppercase tracking-tighter border-emerald-500/20 text-emerald-500 h-4 px-1 leading-none">
                                                 {item.frequency.replace('_', ' ')}
                                             </Badge>
                                         </td>
-                                        <td className="p-4 text-right font-black tabular-nums text-emerald-500">
+                                        <td className="px-4 py-0 text-right font-black tabular-nums text-emerald-500 text-[11px]">
                                             {item.amount.currency} {item.amount.amount.toLocaleString()}
                                         </td>
-                                        <td className="p-4 text-right">
+                                        <td className="px-4 py-0 text-right">
                                             <div className="flex justify-end space-x-2">
-                                                <Button variant="ghost" size="sm" onClick={() => openEdit(item)}>Edit</Button>
-                                                <Button variant="ghost" size="sm" className="text-destructive" onClick={() => handleDelete(item.id)}>Remove</Button>
+                                                <button onClick={() => openEdit(item)} className="p-1 hover:text-primary transition-all text-white/40 hover:text-white" title="Edit"><Pencil className="h-3.5 w-3.5" /></button>
+                                                <button onClick={() => handleDelete(item.id)} className="p-1 hover:text-red-500 transition-all text-red-500/40 hover:text-red-500" title="Delete"><Trash2 className="h-3.5 w-3.5" /></button>
                                             </div>
                                         </td>
                                     </tr>

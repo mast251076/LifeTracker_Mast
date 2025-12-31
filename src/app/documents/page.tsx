@@ -110,23 +110,25 @@ export default function DocumentsPage() {
 
     return (
         <Layout>
-            <div className="space-y-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col space-y-4 animate-in fade-in duration-500">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-4">
                     <div>
-                        <h2 className="text-3xl font-bold tracking-tight">Documents</h2>
-                        <p className="text-muted-foreground">Securely track your important papers and IDs.</p>
+                        <h2 className="text-2xl font-black tracking-tight text-white">Document Matrix</h2>
+                        <p className="text-muted-foreground mt-0.5 text-[11px] font-medium uppercase tracking-wider opacity-60 flex items-center">
+                            <FileText className="h-3 w-3 mr-1.5" /> Encrypted Paperwork Repository
+                        </p>
                     </div>
-                    <Button onClick={openAdd} className="flex items-center gap-2">
-                        <Plus className="h-4 w-4" /> Add Document
+                    <Button onClick={openAdd} className="h-8 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-[11px] font-black uppercase tracking-wider shadow-none">
+                        <Plus className="mr-1.5 h-3.5 w-3.5" /> Ingest Document
                     </Button>
                 </div>
 
-                <div className="flex flex-col md:flex-row gap-4">
-                    <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white/5 p-2 rounded-xl border border-white/5">
+                    <div className="md:col-span-2 relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground opacity-50" />
                         <Input
-                            placeholder="Search by title or number..."
-                            className="pl-10"
+                            placeholder="Search Matrix..."
+                            className="pl-9 h-8 bg-black/20 border-white/5 text-[11px] rounded-lg"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -134,9 +136,9 @@ export default function DocumentsPage() {
                     <Select
                         value={selectedCategory}
                         onChange={(e) => setSelectedCategory(e.target.value as any)}
-                        className="w-full md:w-48"
+                        className="h-8 bg-black/20 border-white/5 text-[11px] rounded-lg"
                     >
-                        <option value="ALL">All Categories</option>
+                        <option value="ALL">All Sectors</option>
                         <option value="IDENTITY">Identity</option>
                         <option value="VEHICLE">Vehicle</option>
                         <option value="PROPERTY">Property</option>
@@ -145,125 +147,110 @@ export default function DocumentsPage() {
                         <option value="FINANCE">Finance</option>
                         <option value="OTHER">Other</option>
                     </Select>
-                </div>
-
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4 glass-card p-6 rounded-2xl border-none">
-                    <div className="flex items-center space-x-4 w-full md:w-auto">
-                        <div className="flex items-center space-x-2 bg-muted/40 p-1.5 rounded-xl border border-white/5">
-                            <Button
-                                variant={viewMode === 'GRID' ? 'secondary' : 'ghost'}
-                                size="sm"
-                                className="h-8 w-8 p-0 rounded-lg"
-                                onClick={() => setViewMode('GRID')}
-                            >
-                                <LayoutGrid className="h-4 w-4" />
-                            </Button>
-                            <Button
-                                variant={viewMode === 'LIST' ? 'secondary' : 'ghost'}
-                                size="sm"
-                                className="h-8 w-8 p-0 rounded-lg"
-                                onClick={() => setViewMode('LIST')}
-                            >
-                                <List className="h-4 w-4" />
-                            </Button>
-                        </div>
+                    <div className="flex items-center space-x-1 bg-black/20 p-1 rounded-lg border border-white/5 w-fit">
+                        <Button
+                            variant={viewMode === 'GRID' ? 'secondary' : 'ghost'}
+                            size="sm"
+                            className="h-6 w-6 p-0 rounded-md"
+                            onClick={() => setViewMode('GRID')}
+                        >
+                            <LayoutGrid className="h-3 w-3" />
+                        </Button>
+                        <Button
+                            variant={viewMode === 'LIST' ? 'secondary' : 'ghost'}
+                            size="sm"
+                            className="h-6 w-6 p-0 rounded-md"
+                            onClick={() => setViewMode('LIST')}
+                        >
+                            <List className="h-3 w-3" />
+                        </Button>
                     </div>
                 </div>
 
                 {filteredDocs.length === 0 ? (
-                    <div className="text-center py-12 border border-dashed rounded-xl">
-                        <FileText className="mx-auto h-12 w-12 text-muted-foreground/30" />
-                        <h3 className="mt-4 text-lg font-semibold">No documents found</h3>
-                        <p className="text-muted-foreground">Start by adding your first important document.</p>
-                        <Button variant="outline" onClick={openAdd} className="mt-4">
-                            Add Document
+                    <div className="text-center py-20 bg-white/5 border border-dashed border-white/10 rounded-xl">
+                        <FileText className="mx-auto h-8 w-8 text-white/20 mb-3" />
+                        <h3 className="text-xs font-black uppercase text-white/40 tracking-widest">No Records Found</h3>
+                        <Button variant="outline" onClick={openAdd} className="mt-4 h-8 text-[10px] uppercase font-black border-white/10">
+                            Ingest First Document
                         </Button>
                     </div>
                 ) : (
                     viewMode === 'GRID' ? (
-                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                             {filteredDocs.map((doc) => {
                                 const isExpired = doc.expiryDate && new Date(doc.expiryDate) < new Date();
 
                                 return (
-                                    <Card key={doc.id} className="glass-card group hover:bg-card/80 transition-all duration-300 border-none relative overflow-hidden flex flex-col">
-                                        <CardHeader className="pb-2">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500">
-                                                    {getCategoryIcon(doc.category)}
-                                                </div>
-                                                {isExpiringSoon(doc.expiryDate) && (
-                                                    <Badge className="bg-orange-500/10 text-orange-500 border-orange-500/20 text-[10px] font-bold">Expiring Soon</Badge>
-                                                )}
+                                    <Card key={doc.id} className="glass-card group p-3 border-none flex flex-col justify-between h-40 border-l-2 border-l-blue-500/40">
+                                        <div className="flex items-start justify-between">
+                                            <div className="min-w-0">
+                                                <span className="fin-label text-[8px] truncate block opacity-50 mb-0.5">{doc.category.replace('_', ' ')}</span>
+                                                <h3 className="text-xs font-black text-white truncate group-hover:text-blue-400 transition-colors">{doc.title}</h3>
                                             </div>
-                                            <CardTitle className="text-lg font-bold truncate">{doc.title}</CardTitle>
-                                            <p className="text-xs text-muted-foreground font-medium uppercase tracking-tighter">
-                                                {doc.category.replace('_', ' ')} {doc.issuer && `• ${doc.issuer}`}
-                                            </p>
-                                        </CardHeader>
-                                        <CardContent className="flex-1 flex flex-col justify-between pt-4">
-                                            <div className="space-y-3">
-                                                {doc.documentNumber && (
-                                                    <div className="flex items-center justify-between text-xs">
-                                                        <span className="text-muted-foreground">ID Number</span>
-                                                        <span className="font-mono font-bold">{doc.documentNumber}</span>
-                                                    </div>
-                                                )}
-                                                <div className="flex items-center justify-between text-xs">
-                                                    <span className="text-muted-foreground">Expiry Date</span>
-                                                    <span className={`font-bold ${isExpiringSoon(doc.expiryDate) ? 'text-orange-500' : ''} ${isExpired ? 'text-destructive' : ''}`}>
-                                                        {doc.expiryDate ? new Date(doc.expiryDate).toLocaleDateString() : 'No Expiry'}
-                                                    </span>
-                                                </div>
+                                            <div className="p-1.5 rounded bg-blue-500/10 text-blue-500 shrink-0">
+                                                {getCategoryIcon(doc.category)}
                                             </div>
-                                            <div className="mt-6 flex items-center justify-between gap-2">
-                                                <Button variant="secondary" size="sm" className="flex-1 rounded-xl text-xs font-bold" onClick={() => openEdit(doc)}>Manage</Button>
-                                                <Button variant="ghost" size="sm" className="rounded-xl text-xs font-bold text-destructive hover:bg-destructive/10" onClick={() => handleDelete(doc.id)}>Archive</Button>
+                                        </div>
+
+                                        <div className="mt-auto space-y-2">
+                                            <div className="flex items-center justify-between text-[10px]">
+                                                <span className="text-white/30 uppercase font-black">Ref</span>
+                                                <span className="font-mono font-bold text-white/60">{doc.documentNumber || 'UNSET'}</span>
                                             </div>
-                                        </CardContent>
-                                        <div className="h-1 w-full bg-gradient-to-r from-blue-500/50 to-transparent absolute bottom-0" />
+                                            <div className="flex items-center justify-between text-[10px]">
+                                                <span className="text-white/30 uppercase font-black">EXP</span>
+                                                <span className={`font-bold ${isExpiringSoon(doc.expiryDate) ? 'text-orange-500' : isExpired ? 'text-red-500' : 'text-white/60'}`}>
+                                                    {doc.expiryDate ? new Date(doc.expiryDate).toLocaleDateString() : 'N/A'}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center mt-2 pt-2 border-t border-white/5 gap-1">
+                                                <button onClick={() => openEdit(doc)} className="flex-1 text-[9px] font-black uppercase bg-white/5 py-1 rounded hover:bg-white/10 text-white/50">Details</button>
+                                                <button onClick={() => handleDelete(doc.id)} className="px-2 text-[9px] font-black uppercase text-red-500/50 hover:text-red-500">Purge</button>
+                                            </div>
+                                        </div>
                                     </Card>
                                 );
                             })}
                         </div>
                     ) : (
-                        <div className="glass-card border-none rounded-2xl overflow-hidden">
-                            <table className="w-full text-left">
-                                <thead className="bg-muted/30 border-b border-white/5">
-                                    <tr>
-                                        <th className="p-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Document</th>
-                                        <th className="p-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Category</th>
-                                        <th className="p-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">ID Number</th>
-                                        <th className="p-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Expiry</th>
-                                        <th className="p-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right">Actions</th>
+                        <div className="bg-white/5 border border-white/5 rounded-lg overflow-hidden">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-white/10 border-b border-white/5">
+                                        <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground">Document Node</th>
+                                        <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground">Sector</th>
+                                        <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground font-mono">Reference</th>
+                                        <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground text-right">Cadence/Expiry</th>
+                                        <th className="px-4 py-2 font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground text-right">Cmd</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
                                     {filteredDocs.map((doc) => {
                                         const isExpired = doc.expiryDate && new Date(doc.expiryDate) < new Date();
                                         return (
-                                            <tr key={doc.id} className="hover:bg-white/5 transition-colors group">
-                                                <td className="p-4">
-                                                    <div className="flex items-center space-x-3">
-                                                        <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500">
+                                            <tr key={doc.id} className="zebra-row hover:bg-white/10 group h-10">
+                                                <td className="px-4 py-0">
+                                                    <div className="flex items-center space-x-2">
+                                                        <div className="p-1 rounded bg-blue-500/10 text-blue-500">
                                                             {getCategoryIcon(doc.category)}
                                                         </div>
-                                                        <span className="font-bold">{doc.title}</span>
+                                                        <div className="text-[11px] font-bold text-white/90">{doc.title}</div>
                                                     </div>
                                                 </td>
-                                                <td className="p-4 text-xs text-muted-foreground">
-                                                    <Badge variant="outline" className="rounded-lg bg-blue-500/5 text-blue-500 border-blue-500/20 uppercase tracking-widest text-[10px]">
+                                                <td className="px-4 py-0">
+                                                    <Badge variant="outline" className="text-[8px] font-black uppercase tracking-tighter border-blue-500/20 text-blue-500 h-3.5 px-1 leading-none">
                                                         {doc.category.replace('_', ' ')}
                                                     </Badge>
                                                 </td>
-                                                <td className="p-4 font-mono text-sm opacity-80">{doc.documentNumber || 'N/A'}</td>
-                                                <td className={`p-4 text-sm font-bold ${isExpiringSoon(doc.expiryDate) ? 'text-orange-500' : ''} ${isExpired ? 'text-destructive' : ''}`}>
+                                                <td className="px-4 py-0 font-mono text-[10px] text-white/40">{doc.documentNumber || '—'}</td>
+                                                <td className={`px-4 py-0 text-right text-[10px] font-bold ${isExpiringSoon(doc.expiryDate) ? 'text-orange-500' : isExpired ? 'text-red-500' : 'text-white/40'}`}>
                                                     {doc.expiryDate ? new Date(doc.expiryDate).toLocaleDateString() : 'N/A'}
                                                 </td>
-                                                <td className="p-4 text-right">
+                                                <td className="px-4 py-0 text-right">
                                                     <div className="flex justify-end space-x-2">
-                                                        <Button variant="ghost" size="sm" onClick={() => openEdit(doc)}>Manage</Button>
-                                                        <Button variant="ghost" size="sm" className="text-destructive" onClick={() => handleDelete(doc.id)}>Archive</Button>
+                                                        <button onClick={() => openEdit(doc)} className="text-[9px] font-black uppercase text-white/40 hover:text-white transition-colors">Audit</button>
+                                                        <button onClick={() => handleDelete(doc.id)} className="text-[9px] font-black uppercase text-red-500/40 hover:text-red-500 transition-colors">Purge</button>
                                                     </div>
                                                 </td>
                                             </tr>

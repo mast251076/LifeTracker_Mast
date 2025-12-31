@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/Label';
 import { Select } from '@/components/ui/Select';
 import { storage } from '@/lib/storage';
 import { AppData, Currency } from '@/types';
-import { Save, RefreshCcw, Download, Trash2, CheckCircle2 } from 'lucide-react';
+import { Save, RefreshCcw, Download, Trash2, CheckCircle2, Settings } from 'lucide-react';
 import { exportDataToExcel } from '@/lib/export';
 
 export default function SettingsPage() {
@@ -65,55 +65,62 @@ export default function SettingsPage() {
 
     return (
         <Layout>
-            <div className="space-y-6 animate-in fade-in duration-500">
-                <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Configuration</h2>
-                    <p className="text-muted-foreground">Customize your experience and manage your data.</p>
+            <div className="flex flex-col space-y-4 animate-in fade-in duration-500">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-4">
+                    <div>
+                        <h2 className="text-2xl font-black tracking-tight text-white">System Configuration</h2>
+                        <p className="text-muted-foreground mt-0.5 text-[11px] font-medium uppercase tracking-wider opacity-60 flex items-center">
+                            <Settings className="h-3 w-3 mr-1.5" /> Core Environment Variables
+                        </p>
+                    </div>
                 </div>
 
-                <div className="grid gap-6">
+                <div className="grid gap-4 md:grid-cols-2">
                     {/* Profile Section */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">User Profile</CardTitle>
-                            <CardDescription>Update your personal information used across the app.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Display Name</Label>
+                    <Card className="glass-card p-4 border-none border-l-2 border-l-blue-500/40">
+                        <div className="mb-4">
+                            <h3 className="fin-label text-[10px]">Operator Profile</h3>
+                            <p className="text-[10px] text-white/40 uppercase font-black">Identity and contact vector settings</p>
+                        </div>
+                        <div className="space-y-4">
+                            <div className="grid gap-1.5">
+                                <Label htmlFor="name" className="text-[10px] uppercase font-black text-white/40">Identity Handle</Label>
                                 <Input
                                     id="name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    placeholder="Enter your name"
+                                    className="h-8 bg-black/20 border-white/5 text-[11px] rounded-lg"
+                                    placeholder="Operator Name"
                                 />
                             </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email Address</Label>
+                            <div className="grid gap-1.5">
+                                <Label htmlFor="email" className="text-[10px] uppercase font-black text-white/40">Communication Node</Label>
                                 <Input
                                     id="email"
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="your@email.com"
+                                    className="h-8 bg-black/20 border-white/5 text-[11px] rounded-lg"
+                                    placeholder="operator@system.node"
                                 />
                             </div>
-                        </CardContent>
+                        </div>
                     </Card>
 
                     {/* Preferences Section */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">Preferences</CardTitle>
-                            <CardDescription>Setup your default currency and visual theme.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="grid gap-4 md:grid-cols-2">
-                            <div className="grid gap-2">
-                                <Label htmlFor="currency">Default Currency</Label>
+                    <Card className="glass-card p-4 border-none border-l-2 border-l-emerald-500/40">
+                        <div className="mb-4">
+                            <h3 className="fin-label text-[10px]">Regional Protocol</h3>
+                            <p className="text-[10px] text-white/40 uppercase font-black">Localization and UI theme parameters</p>
+                        </div>
+                        <div className="grid gap-4">
+                            <div className="grid gap-1.5">
+                                <Label htmlFor="currency" className="text-[10px] uppercase font-black text-white/40">Base Currency Unit</Label>
                                 <Select
                                     id="currency"
                                     value={currency}
                                     onChange={(e) => setCurrency(e.target.value as Currency)}
+                                    className="h-8 bg-black/20 border-white/5 text-[11px] rounded-lg"
                                 >
                                     <option value="INR">Indian Rupee (INR)</option>
                                     <option value="USD">US Dollar (USD)</option>
@@ -121,61 +128,62 @@ export default function SettingsPage() {
                                     <option value="GBP">British Pound (GBP)</option>
                                 </Select>
                             </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="theme">App Theme</Label>
+                            <div className="grid gap-1.5">
+                                <Label htmlFor="theme" className="text-[10px] uppercase font-black text-white/40">Visual Interface Mode</Label>
                                 <Select
                                     id="theme"
                                     value={theme}
                                     onChange={(e) => setTheme(e.target.value as any)}
+                                    className="h-8 bg-black/20 border-white/5 text-[11px] rounded-lg"
                                 >
-                                    <option value="light">Light</option>
-                                    <option value="dark">Dark</option>
-                                    <option value="system">System Default</option>
+                                    <option value="light">Luminous</option>
+                                    <option value="dark">Stealth (Dark)</option>
+                                    <option value="system">Auto-Sync System</option>
                                 </Select>
                             </div>
-                        </CardContent>
+                        </div>
                     </Card>
 
                     {/* Data Management Section */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">Data Management</CardTitle>
-                            <CardDescription>Export your data for backup or clear everything to start fresh.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="flex flex-wrap gap-4">
-                            <button
+                    <Card className="glass-card p-4 border-none border-l-2 border-l-red-500/40 md:col-span-2">
+                        <div className="mb-4">
+                            <h3 className="fin-label text-[10px]">Data Integrity & I/O</h3>
+                            <p className="text-[10px] text-white/40 uppercase font-black">Archive export and destructive memory flush</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            <Button
                                 onClick={() => exportDataToExcel("Complete_Data_Export")}
-                                className="glass-card inline-flex items-center justify-center rounded-xl text-sm font-medium transition-all hover:scale-105 active:scale-95 h-11 px-6 py-2"
+                                className="h-8 px-4 bg-white/5 hover:bg-white/10 text-white/60 text-[10px] font-black uppercase tracking-wider rounded-lg border border-white/5"
                             >
-                                <Download className="mr-2 h-4 w-4 text-primary" />
-                                Export All Data
-                            </button>
-                            <Button variant="destructive" onClick={handleReset} className="flex items-center">
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Reset Application Data
+                                <Download className="mr-1.5 h-3.5 w-3.5 text-blue-500" />
+                                Extract All Data (.xlsx)
                             </Button>
-                        </CardContent>
+                            <Button variant="ghost" onClick={handleReset} className="h-8 px-4 text-red-500/60 hover:text-red-500 text-[10px] font-black uppercase tracking-wider">
+                                <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+                                Initiate Factory Reset
+                            </Button>
+                        </div>
                     </Card>
+                </div>
 
-                    {/* Action Bar */}
-                    <div className="flex items-center justify-end space-x-4 pt-4">
-                        {saveStatus === 'success' && (
-                            <div className="flex items-center text-sm text-green-500 animate-in fade-in slide-in-from-right-2">
-                                <CheckCircle2 className="mr-2 h-4 w-4" />
-                                Settings saved successfully
-                            </div>
+                {/* Action Bar */}
+                <div className="flex items-center justify-end space-x-4 border-t border-white/5 pt-4">
+                    {saveStatus === 'success' && (
+                        <div className="flex items-center text-[10px] font-black uppercase tracking-widest text-emerald-500 animate-in fade-in slide-in-from-right-2">
+                            <CheckCircle2 className="mr-2 h-3.5 w-3.5" />
+                            Parameters Sync Complete
+                        </div>
+                    )}
+                    <Button onClick={handleSave} disabled={isSaving} className="h-8 px-6 bg-primary hover:bg-primary/90 text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-none">
+                        {isSaving ? (
+                            <RefreshCcw className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                            <>
+                                <Save className="mr-1.5 h-3.5 w-3.5" />
+                                Sync Changes
+                            </>
                         )}
-                        <Button onClick={handleSave} disabled={isSaving} className="w-32">
-                            {isSaving ? (
-                                <RefreshCcw className="h-4 w-4 animate-spin" />
-                            ) : (
-                                <>
-                                    <Save className="mr-2 h-4 w-4" />
-                                    Save Changes
-                                </>
-                            )}
-                        </Button>
-                    </div>
+                    </Button>
                 </div>
             </div>
         </Layout>

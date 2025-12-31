@@ -9,7 +9,7 @@ import { AppData } from '@/types';
 import { storage } from '@/lib/storage';
 import { mockAppData } from '@/lib/mockData';
 import { formatCurrency } from '@/lib/utils';
-import { ArrowUpRight, ArrowDownRight, FileText, Wallet, Building, CreditCard, Lock, Shield, LayoutGrid, List } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, FileText, Wallet, Building, CreditCard, Lock, Shield, LayoutGrid, List, AlertTriangle, Settings } from 'lucide-react';
 import { exportDataToExcel } from '@/lib/export';
 
 const DashboardIcon = ({ icon: Icon, className }: { icon: any, className?: string }) => {
@@ -92,235 +92,180 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="space-y-8 animate-in fade-in duration-500">
-        <div className="flex items-center justify-between">
+      <div className="flex flex-col space-y-4 animate-in fade-in duration-500">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-4">
           <div>
-            <h2 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">Overview</h2>
-            <p className="text-muted-foreground mt-1 text-lg">Good evening, {data.profile.name}. Here's your financial snapshot.</p>
+            <h2 className="text-2xl font-black tracking-tight text-white">Command Intelligence</h2>
+            <p className="text-muted-foreground mt-0.5 text-[11px] font-medium uppercase tracking-wider opacity-60 flex items-center">
+              <Shield className="h-3 w-3 mr-1.5" /> Logical Node: {data.profile.name} (Authorized)
+            </p>
           </div>
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2 bg-muted/40 p-1.5 rounded-xl border border-white/5 mr-2">
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 bg-black/20 p-1 rounded-lg border border-white/5">
               <Button
                 variant={viewMode === 'GRID' ? 'secondary' : 'ghost'}
                 size="sm"
-                className="h-9 w-9 p-0 rounded-lg"
+                className="h-6 w-6 p-0 rounded-md"
                 onClick={() => setViewMode('GRID')}
               >
-                <LayoutGrid className="h-4 w-4" />
+                <LayoutGrid className="h-3 w-3" />
               </Button>
               <Button
                 variant={viewMode === 'LIST' ? 'secondary' : 'ghost'}
                 size="sm"
-                className="h-9 w-9 p-0 rounded-lg"
+                className="h-6 w-6 p-0 rounded-md"
                 onClick={() => setViewMode('LIST')}
               >
-                <List className="h-4 w-4" />
+                <List className="h-3 w-3" />
               </Button>
             </div>
             <button
               onClick={() => exportDataToExcel("Financial_Snapshot")}
-              className="glass-card inline-flex items-center justify-center rounded-xl text-sm font-medium transition-all hover:scale-105 active:scale-95 h-11 px-6 py-2"
+              className="glass-card flex items-center h-8 px-3 text-[10px] font-black uppercase tracking-widest rounded-lg border-white/10 hover:bg-white/5"
             >
-              <FileText className="mr-2 h-4 w-4 text-primary" />
-              Export Reports
+              <FileText className="mr-1.5 h-3 w-3 text-primary" />
+              Terminal Export
             </button>
           </div>
         </div>
 
-        {/* Alerts Section */}
+        {/* Alerts Section (Compact) */}
         {alerts.length > 0 && (
-          <div className="grid gap-4">
-            <Card className="border-none shadow-2xl bg-gradient-to-br from-yellow-500/10 via-background to-background border-l-4 border-l-yellow-500/50">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-bold flex items-center text-yellow-500">
-                  <span className="relative flex h-3 w-3 mr-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
-                  </span>
-                  Pending Actions
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {alerts.map((alert, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-4 bg-muted/30 backdrop-blur-sm border border-white/5 rounded-xl transition-all hover:bg-muted/50">
-                      <div className="space-y-1">
-                        <p className="font-semibold text-sm">{alert.title}</p>
-                        <p className="text-xs text-muted-foreground">Deadline: {alert.date}</p>
-                      </div>
-                      <Badge variant={alert.type === 'CRITICAL' ? 'destructive' : 'secondary'} className="rounded-full px-3">
-                        {alert.daysLeft}d left
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* Key Metrics Grid */}
-        {viewMode === 'GRID' ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="glass-card group overflow-hidden relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Net Worth</CardTitle>
-                <Wallet className="h-5 w-5 text-primary" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold tracking-tight">{formatCurrency(netWorth)}</div>
-                <div className="mt-2 flex items-center text-xs font-medium text-green-500 bg-green-500/10 w-fit px-2 py-1 rounded-full">
-                  <ArrowUpRight className="h-3 w-3 mr-1" /> 12.4% vs LMT
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="glass-card group overflow-hidden relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Total Assets</CardTitle>
-                <Building className="h-5 w-5 text-green-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold tracking-tight text-green-400">{formatCurrency(totalAssets)}</div>
-                <div className="mt-2 text-xs text-muted-foreground">
-                  Distribution in {data.assets.length} categories
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="glass-card group overflow-hidden relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Liabilities</CardTitle>
-                <CreditCard className="h-5 w-5 text-red-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold tracking-tight text-red-400">{formatCurrency(totalLiabilities)}</div>
-                <div className="mt-2 text-xs text-muted-foreground font-medium">
-                  DSR: {Math.round((totalLiabilities / (totalAssets || 1)) * 100)}% of Assets
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="glass-card group overflow-hidden relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Documents</CardTitle>
-                <FileText className="h-5 w-5 text-blue-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold tracking-tight">{data.documents.length}</div>
-                <div className="mt-2 text-xs text-muted-foreground">
-                  {data.documents.filter(d => !d.expiryDate).length} perpetual entries
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        ) : (
-          <div className="glass-card p-2 rounded-2xl border-none">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/5">
-              {[
-                { label: 'Net Worth', value: formatCurrency(netWorth), icon: Wallet, color: 'text-primary' },
-                { label: 'Assets', value: formatCurrency(totalAssets), icon: Building, color: 'text-green-500' },
-                { label: 'Liabilities', value: formatCurrency(totalLiabilities), icon: CreditCard, color: 'text-red-500' },
-                { label: 'Vault', value: data.vaultEntries.length, icon: Lock, color: 'text-purple-500' }
-              ].map((m, i) => (
-                <div key={i} className="p-6 flex items-center justify-between">
-                  <div>
-                    <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest opacity-60 mb-1">{m.label}</p>
-                    <p className="text-xl font-black tabular-nums">{m.value}</p>
-                  </div>
-                  <m.icon className={`h-8 w-8 ${m.color} opacity-20`} />
+          <div className="bg-orange-500/5 border border-orange-500/10 rounded-lg p-2 flex items-center space-x-4 overflow-x-auto custom-scrollbar no-scrollbar">
+            <div className="flex items-center space-x-2 shrink-0 border-r border-orange-500/20 pr-4">
+              <AlertTriangle className="h-3.5 w-3.5 text-orange-500" />
+              <span className="text-[9px] font-black uppercase text-orange-500 tracking-tighter">Event Monitor</span>
+            </div>
+            <div className="flex space-x-4">
+              {alerts.map((alert, idx) => (
+                <div key={idx} className="flex items-center space-x-2 shrink-0">
+                  <span className="text-[10px] font-bold text-white/70">{alert.title}</span>
+                  <Badge variant={alert.type === 'CRITICAL' ? 'destructive' : 'secondary'} className="h-3.5 text-[8px] px-1 font-black leading-none">
+                    {alert.daysLeft}D
+                  </Badge>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Detailed Sections */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="lg:col-span-4 glass-card border-none">
-            <CardHeader>
-              <div>
-                <CardTitle className="text-xl font-bold">Financial Health</CardTitle>
-                <CardDescription>
-                  Summary of your recent wealth movements.
-                </CardDescription>
+        {/* Key Metrics Grid (Executive Style) */}
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: 'Aggregate Equity', value: formatCurrency(netWorth), icon: Wallet, color: 'text-primary', change: '+12.4%', changeType: 'UP' },
+            { label: 'Asset Nodes', value: formatCurrency(totalAssets), icon: Building, color: 'text-emerald-500', sub: `${data.assets.length} Active Positions` },
+            { label: 'Liability Index', value: formatCurrency(totalLiabilities), icon: CreditCard, color: 'text-red-500', sub: `DSR: ${Math.round((totalLiabilities / (totalAssets || 1)) * 100)}% Velocity` },
+            { label: 'Vault Quant', value: data.vaultEntries.length, icon: Lock, color: 'text-blue-500', sub: `${data.documents.length} Encrypted Records` }
+          ].map((m, i) => (
+            <Card key={i} className="glass-card p-3 border-none flex flex-col justify-between h-24 border-l-2 border-l-white/10 hover:border-l-primary/60 transition-all">
+              <div className="flex items-center justify-between">
+                <span className="fin-label text-[9px]">{m.label}</span>
+                <m.icon className={`h-3 w-3 ${m.color} opacity-40`} />
               </div>
-            </CardHeader>
-            <CardContent>
+              <div>
+                <div className="text-xl fin-data text-white">{m.value}</div>
+                <div className="flex items-center mt-1">
+                  {m.change ? (
+                    <span className="text-[9px] font-black text-emerald-500 flex items-center">
+                      <ArrowUpRight className="h-2 w-2 mr-0.5" /> {m.change}
+                    </span>
+                  ) : (
+                    <span className="text-[9px] font-bold text-white/30 uppercase tracking-tighter leading-none">{m.sub}</span>
+                  )}
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        {/* Detailed Sections */}
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-12">
+          <Card className="lg:col-span-8 glass-card border-none p-0 overflow-hidden flex flex-col">
+            <div className="p-3 border-b border-white/5 flex items-center justify-between bg-white/5">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Portfolio Architecture</h3>
+              <div className="text-[9px] font-black text-primary uppercase tracking-widest cursor-pointer hover:text-white transition-colors flex items-center">
+                Expand Matrix <ArrowUpRight className="h-2.5 w-2.5 ml-1" />
+              </div>
+            </div>
+            <CardContent className="p-0 flex-1">
               {viewMode === 'LIST' ? (
-                <div className="space-y-4">
-                  {data.assets.length > 0 ? data.assets.slice(0, 6).map((asset) => (
-                    <div key={asset.id} className="flex items-center group/item p-3 glass-card border-white/5 rounded-xl transition-all hover:bg-primary/5">
-                      <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center group-hover/item:scale-110 transition-transform">
-                        <Building className="h-5 w-5 text-muted-foreground" />
+                <div className="divide-y divide-white/5">
+                  {data.assets.length > 0 ? data.assets.slice(0, 8).map((asset) => (
+                    <div key={asset.id} className="flex items-center px-4 h-10 zebra-row group transition-colors">
+                      <div className="h-6 w-6 rounded bg-black/40 flex items-center justify-center mr-3 shrink-0 border border-white/5">
+                        <Building className="h-3 w-3 text-white/40 group-hover:text-primary transition-colors" />
                       </div>
-                      <div className="ml-4 flex-1 space-y-0.5">
-                        <p className="text-sm font-bold leading-none">{asset.name}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase font-black opacity-60">
-                          {asset.type.replace('_', ' ')}
-                        </p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-bold text-white/80 truncate">{asset.name}</p>
                       </div>
-                      <div className="text-right">
-                        <div className="font-black text-sm tabular-nums">
+                      <div className="px-3 text-[9px] font-black uppercase text-white/20 tracking-tighter">
+                        {asset.type.replace('_', ' ')}
+                      </div>
+                      <div className="text-right ml-4">
+                        <div className="text-[11px] fin-data text-white">
                           {formatCurrency(asset.currentValue?.amount || 0)}
                         </div>
-                        <Badge variant="outline" className="text-[8px] font-black uppercase py-0 px-1 border-white/5 opacity-60">{asset.status}</Badge>
                       </div>
                     </div>
                   )) : (
-                    <div className="text-center py-8 text-muted-foreground">No assets recorded yet.</div>
+                    <div className="text-center py-10 text-[10px] font-black uppercase text-white/20">Empty Matrix</div>
                   )}
                 </div>
               ) : (
-                <div className="grid gap-4 md:grid-cols-2">
-                  {data.assets.length > 0 ? data.assets.slice(0, 4).map((asset) => (
-                    <div key={asset.id} className="p-4 glass-card border-none rounded-2xl relative overflow-hidden group">
-                      <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <Building className="h-12 w-12" />
+                <div className="grid gap-2 p-3 md:grid-cols-3">
+                  {data.assets.length > 0 ? data.assets.slice(0, 9).map((asset) => (
+                    <div key={asset.id} className="p-2.5 bg-black/40 rounded border border-white/5 flex flex-col justify-between h-20 hover:bg-black/60 transition-all border-l-2 border-l-primary/20">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[8px] font-black uppercase text-white/20 tracking-tighter">{asset.type.replace('_', ' ')}</span>
+                        <Building className="h-2.5 w-2.5 text-white/10" />
                       </div>
-                      <div className="relative z-10">
-                        <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1 opacity-60">{asset.type.replace('_', ' ')}</p>
-                        <h4 className="font-bold text-lg mb-2">{asset.name}</h4>
-                        <div className="text-xl font-black text-primary">{formatCurrency(asset.currentValue?.amount || 0)}</div>
+                      <div>
+                        <h4 className="font-bold text-[10px] text-white/70 truncate leading-tight">{asset.name}</h4>
+                        <div className="text-[12px] fin-data text-white mt-1">{formatCurrency(asset.currentValue?.amount || 0)}</div>
                       </div>
-                      <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-primary to-transparent" />
                     </div>
                   )) : (
-                    <div className="col-span-2 text-center py-8 text-muted-foreground">No assets recorded yet.</div>
+                    <div className="col-span-3 text-center py-10 text-[10px] font-black uppercase text-white/20">Empty Matrix</div>
                   )}
                 </div>
               )}
             </CardContent>
           </Card>
 
-          <Card className="lg:col-span-3 glass-card border-none">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold">Quick Actions</CardTitle>
-              <CardDescription>
-                Direct entry and portal shortcuts.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-3">
+          <Card className="lg:col-span-4 glass-card border-none p-0 overflow-hidden flex flex-col">
+            <div className="p-3 border-b border-white/5 bg-white/5">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Operation Center</h3>
+            </div>
+            <CardContent className="p-1 flex-1">
               {[
-                { label: 'Register Asset', icon: Building, color: 'text-primary', bg: 'bg-primary/10' },
-                { label: 'Log Expense', icon: ArrowDownRight, color: 'text-red-500', bg: 'bg-red-500/10' },
-                { label: 'Safe Upload', icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-                { label: 'Vault Access', icon: Lock, color: 'text-purple-500', bg: 'bg-purple-500/10' }
+                { label: 'Register Asset Node', icon: Building, color: 'text-primary', bg: 'bg-primary/5' },
+                { label: 'Log Financial Entropy', icon: ArrowDownRight, color: 'text-orange-500', bg: 'bg-orange-500/5' },
+                { label: 'Ingest Secure Document', icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/5' },
+                { label: 'Sync System Params', icon: Settings, color: 'text-purple-500', bg: 'bg-purple-500/5' }
               ].map((action, i) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-muted/20 hover:bg-muted/40 cursor-pointer transition-all hover:translate-x-1">
-                  <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-lg ${action.bg} ${action.color}`}>
-                      <DashboardIcon icon={action.icon} className="h-4 w-4" />
+                <div key={i} className="flex items-center justify-between p-2 rounded hover:bg-white/5 cursor-pointer transition-all group">
+                  <div className="flex items-center space-x-2.5 min-w-0">
+                    <div className={`p-1.5 rounded ${action.bg} ${action.color} group-hover:scale-105 transition-transform`}>
+                      <DashboardIcon icon={action.icon} className="h-3 w-3" />
                     </div>
-                    <span className="text-sm font-bold tracking-tight">{action.label}</span>
+                    <span className="text-[11px] font-bold text-white/60 group-hover:text-white transition-colors truncate">{action.label}</span>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                  <ArrowUpRight className="h-3 w-3 text-white/10 group-hover:text-white/40 group-hover:translate-x-0.5" />
                 </div>
               ))}
+
+              <div className="mt-4 pt-4 border-t border-white/5 px-2 mb-2">
+                <div className="bg-gradient-to-br from-primary/10 to-transparent p-3 rounded border border-primary/10">
+                  <h5 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-1">Verification Index</h5>
+                  <div className="h-1 w-full bg-white/5 rounded-full mt-2 overflow-hidden">
+                    <div className="h-full bg-primary w-[85%]" />
+                  </div>
+                  <div className="flex justify-between mt-1.5">
+                    <span className="text-[8px] font-bold text-white/30 uppercase">Audit Strength</span>
+                    <span className="text-[9px] font-black text-primary">85.4%</span>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

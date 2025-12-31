@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Cloud, FileText, Home, PieChart, Lock, Menu, Settings, Shield, TrendingUp, TrendingDown } from 'lucide-react';
+import { Cloud, FileText, Home, PieChart, Lock, Menu, Settings, Shield, TrendingUp, TrendingDown, Code } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useState, useEffect } from 'react';
 import { storage } from '@/lib/storage';
@@ -24,15 +24,16 @@ export function Layout({ children }: LayoutProps) {
     }, [pathname]);
 
     const navigation = [
-        { name: 'Core Overview', href: '/', icon: Home },
-        { name: 'Wealth Assets', href: '/assets', icon: PieChart },
-        { name: 'Liabilities', href: '/liabilities', icon: Cloud },
-        { name: 'Documents', href: '/documents', icon: FileText },
+        { name: 'Command Dashboard', href: '/', icon: Home },
+        { name: 'Asset Matrix', href: '/assets', icon: PieChart },
+        { name: 'Liability Ledger', href: '/liabilities', icon: Cloud },
+        { name: 'Doc Repository', href: '/documents', icon: FileText },
         { name: 'Secure Vault', href: '/vault', icon: Lock },
-        { name: 'Income Stream', href: '/income', icon: TrendingUp },
-        { name: 'Expense Log', href: '/expenses', icon: TrendingDown },
-        { name: 'Retirement', href: '/retirement', icon: Shield },
+        { name: 'Inflow Architecture', href: '/income', icon: TrendingUp },
+        { name: 'Entropy Log', href: '/expenses', icon: TrendingDown },
+        { name: 'Future Projections', href: '/retirement', icon: Shield },
         { name: 'App Settings', href: '/settings', icon: Settings },
+        { name: 'System Parameters', href: '/config', icon: Code },
     ];
 
     const getInitials = (name: string) => {
@@ -47,41 +48,41 @@ export function Layout({ children }: LayoutProps) {
     return (
         <div className="flex h-screen bg-background overflow-hidden selection:bg-primary/30">
             <aside
-                className={`${isSidebarOpen ? 'w-72' : 'w-24'} hidden md:flex flex-col border-r border-white/5 bg-[#0a0c10] transition-all duration-500 ease-in-out`}
+                className={`${isSidebarOpen ? 'w-64' : 'w-20'} hidden md:flex flex-col border-r border-white/5 bg-[#0a0c10] transition-all duration-500 ease-in-out`}
             >
-                <div className="flex items-center h-20 px-6 mb-4">
+                <div className="flex items-center h-16 px-6 mb-2">
                     <button
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        className="p-2 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors"
+                        className="p-1.5 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors"
                     >
-                        <Menu className="h-5 w-5 text-primary" />
+                        <Menu className="h-4 w-4 text-primary" />
                     </button>
                     {isSidebarOpen && (
-                        <div className="ml-4 flex flex-col items-start animate-in fade-in slide-in-from-left-2 duration-300">
-                            <span className="font-extrabold text-xl tracking-tighter bg-gradient-to-br from-white to-gray-400 bg-clip-text text-transparent">LifeTracker</span>
-                            <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold leading-none">Intelligence</span>
+                        <div className="ml-3 flex flex-col items-start animate-in fade-in slide-in-from-left-2 duration-300">
+                            <span className="font-extrabold text-lg tracking-tighter bg-gradient-to-br from-white to-gray-400 bg-clip-text text-transparent italic">LifeTracker</span>
+                            <span className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground font-black leading-none opacity-60">Intelligence</span>
                         </div>
                     )}
                 </div>
 
-                <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+                <nav className="flex-1 px-3 space-y-1 overflow-y-auto custom-scrollbar">
                     {navigation.map((item) => {
                         const isActive = pathname === item.href;
                         return (
                             <Link key={item.name} href={item.href} className="block group">
                                 <div
-                                    className={`relative w-full flex items-center p-3 rounded-xl transition-all duration-300 ${isActive
-                                        ? 'bg-primary/10 text-primary shadow-[0_0_20px_rgba(59,130,246,0.1)]'
+                                    className={`relative w-full flex items-center p-2.5 rounded-lg transition-all duration-200 ${isActive
+                                        ? 'bg-primary/10 text-primary shadow-sm'
                                         : 'text-muted-foreground hover:text-white hover:bg-white/5'
                                         }`}
                                 >
-                                    <item.icon className={`h-5 w-5 mr-4 transition-transform ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
+                                    <item.icon className={`h-4 w-4 mr-3 transition-transform ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
                                     {isSidebarOpen && (
-                                        <span className="font-semibold text-sm tracking-tight transition-opacity duration-300">
+                                        <span className="font-medium text-[13px] tracking-tight transition-opacity duration-300">
                                             {item.name}
                                         </span>
                                     )}
-                                    {isActive && <div className="absolute right-3 h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(59,130,246,0.8)]" />}
+                                    {isActive && <div className="absolute left-0 h-4 w-1 rounded-r-full bg-primary" />}
                                 </div>
                             </Link>
                         );
@@ -89,14 +90,14 @@ export function Layout({ children }: LayoutProps) {
                 </nav>
 
                 {isSidebarOpen && userData && (
-                    <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/5">
-                        <div className="flex items-center space-x-3">
-                            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center font-bold text-white shadow-lg shadow-primary/20">
+                    <div className="p-3 m-3 rounded-xl bg-white/5 border border-white/5">
+                        <div className="flex items-center space-x-2.5">
+                            <div className="h-8 w-8 rounded-lg bg-primary/20 flex items-center justify-center font-bold text-primary text-xs">
                                 {getInitials(userData.name)}
                             </div>
-                            <div className="flex flex-col">
-                                <span className="text-sm font-bold text-white truncate max-w-[120px]">{userData.name}</span>
-                                <span className="text-[10px] text-muted-foreground font-medium">Standard Plan</span>
+                            <div className="flex flex-col min-w-0">
+                                <span className="text-[12px] font-bold text-white truncate">{userData.name}</span>
+                                <span className="text-[9px] text-muted-foreground font-black uppercase tracking-wider">Enterprise</span>
                             </div>
                         </div>
                     </div>
@@ -104,29 +105,31 @@ export function Layout({ children }: LayoutProps) {
             </aside>
 
             <main className="flex-1 flex flex-col overflow-hidden">
-                <header className="flex items-center justify-between h-20 px-8 border-b border-white/5 bg-background/50 backdrop-blur-xl z-10">
+                <header className="flex items-center justify-between h-16 px-6 border-b border-white/5 bg-background/50 backdrop-blur-xl z-10">
                     <div className="flex items-center md:hidden">
-                        <span className="font-extrabold text-xl tracking-tighter">LifeTracker</span>
+                        <span className="font-extrabold text-lg tracking-tighter italic">LifeTracker</span>
                     </div>
-                    <div className="flex-1 max-w-xl mx-8 hidden md:block">
-                        {/* Search or breadcrumbs could go here */}
+                    <div className="flex-1 max-w-xl mx-4 hidden md:block">
+                        <div className="h-9 w-full rounded-lg bg-white/5 border border-white/5 flex items-center px-3 text-muted-foreground text-xs font-medium">
+                            Search Intelligence...
+                        </div>
                     </div>
                     <div className="flex items-center space-x-6">
                         <div className="text-right hidden sm:block">
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-none">Profile Status</p>
-                            <p className="text-xs font-semibold text-green-500 flex items-center justify-end mt-1">
+                            <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground leading-none opacity-60">Auth Level</p>
+                            <p className="text-[11px] font-bold text-green-500/80 flex items-center justify-end mt-1">
                                 <Shield className="h-3 w-3 mr-1" />
-                                Verified Secured
+                                Tier-1 High
                             </p>
                         </div>
-                        <div className="h-10 w-10 rounded-xl border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors cursor-pointer group">
-                            <Settings className="h-5 w-5 text-muted-foreground group-hover:rotate-45 transition-transform" />
+                        <div className="h-8 w-8 rounded-lg border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors cursor-pointer group">
+                            <Settings className="h-4 w-4 text-muted-foreground group-hover:rotate-45 transition-transform" />
                         </div>
                     </div>
                 </header>
 
                 <div className="flex-1 overflow-auto bg-[#050608] custom-scrollbar">
-                    <div className="mx-auto max-w-7xl p-8 lg:p-12">
+                    <div className="mx-auto max-w-full p-6 lg:p-8">
                         {children}
                     </div>
                 </div>
