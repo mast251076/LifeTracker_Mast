@@ -157,12 +157,16 @@ export default function Dashboard() {
         {/* Key Metrics Grid (Executive Style) */}
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           {[
-            { label: 'Aggregate Equity', value: formatCurrency(netWorth), icon: Wallet, color: 'text-primary', change: '+12.4%', changeType: 'UP', path: '/assets' },
+            { label: 'Aggregate Equity', value: formatCurrency(netWorth), icon: Wallet, color: 'text-primary', change: '+12.4%', changeType: 'UP' },
             { label: 'Asset Nodes', value: formatCurrency(totalAssets), icon: Building, color: 'text-emerald-500', sub: `${data.assets.length} Active Positions`, path: '/assets' },
             { label: 'Liability Index', value: formatCurrency(totalLiabilities), icon: CreditCard, color: 'text-red-500', sub: `DSR: ${Math.round((totalLiabilities / (totalAssets || 1)) * 100)}% Velocity`, path: '/liabilities' },
             { label: 'Vault Quant', value: data.vaultEntries.length, icon: Lock, color: 'text-blue-500', sub: `${data.documents.length} Encrypted Records`, path: '/documents' }
           ].map((m, i) => (
-            <Card key={i} onClick={() => router.push(m.path)} className="glass-card p-3 border-none flex flex-col justify-between h-24 border-l-2 border-l-white/10 hover:border-l-primary/60 hover:bg-white/5 cursor-pointer transition-all active:scale-[0.98]">
+            <Card
+              key={i}
+              onClick={() => m.path && router.push(m.path)}
+              className={`glass-card p-3 border-none flex flex-col justify-between h-24 border-l-2 border-l-white/10 transition-all ${m.path ? 'hover:border-l-primary/60 hover:bg-white/5 cursor-pointer active:scale-[0.98]' : 'cursor-default'}`}
+            >
               <div className="flex items-center justify-between">
                 <span className="fin-label text-[9px]">{m.label}</span>
                 <m.icon className={`h-3 w-3 ${m.color} opacity-40`} />
