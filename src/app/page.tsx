@@ -11,7 +11,7 @@ import { AppData } from '@/types';
 import { storage } from '@/lib/storage';
 import { mockAppData } from '@/lib/mockData';
 import { formatCurrency } from '@/lib/utils';
-import { ArrowUpRight, ArrowDownRight, FileText, Wallet, Building, CreditCard, Lock, Shield, LayoutGrid, List, AlertTriangle, Settings } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, FileText, Wallet, Building, CreditCard, Lock, Shield, LayoutGrid, List, AlertTriangle, Settings, TrendingUp } from 'lucide-react';
 import { exportDataToExcel } from '@/lib/export';
 
 const DashboardIcon = ({ icon: Icon, className }: { icon: any, className?: string }) => {
@@ -23,6 +23,7 @@ export default function Dashboard() {
   const [data, setData] = useState<AppData | null>(null);
   const [viewMode, setViewMode] = useState<'GRID' | 'LIST'>('LIST');
   const [mounted, setMounted] = useState(false);
+  const [mcpValue, setMcpValue] = useState(0);
 
   useEffect(() => {
     setMounted(true);
@@ -34,13 +35,19 @@ export default function Dashboard() {
     } else {
       setData(existing);
     }
+
+    // Load MCP Value
+    import('@/lib/mcp/manager').then(({ mcpManager }) => {
+      const context = mcpManager.getContext();
+      setMcpValue(context.metrics.currentValue || 0);
+    });
   }, []);
 
   if (!mounted || !data) return null;
 
   const totalAssets = data.assets.reduce((sum, item) => sum + item.currentValue.amount, 0);
   const totalLiabilities = data.liabilities.reduce((sum, item) => sum + item.outstandingAmount.amount, 0);
-  const netWorth = totalAssets - totalLiabilities;
+  const netWorth = totalAssets - totalLiabilities + mcpValue;
 
   // Calculate Deadlines
   const getDeadlines = () => {
@@ -158,9 +165,9 @@ export default function Dashboard() {
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           {[
             { label: 'Aggregate Equity', value: formatCurrency(netWorth), icon: Wallet, color: 'text-primary', change: '+12.4%', changeType: 'UP' },
+            { label: 'Asset Intelligence', value: formatCurrency(mcpValue), icon: TrendingUp, color: 'text-primary', sub: mcpValue > 0 ? 'Live Ingestion Active' : 'Sync to Initialize', path: '/investments' },
             { label: 'Asset Nodes', value: formatCurrency(totalAssets), icon: Building, color: 'text-emerald-500', sub: `${data.assets.length} Active Positions`, path: '/assets' },
             { label: 'Liability Index', value: formatCurrency(totalLiabilities), icon: CreditCard, color: 'text-red-500', sub: `DSR: ${Math.round((totalLiabilities / (totalAssets || 1)) * 100)}% Velocity`, path: '/liabilities' },
-            { label: 'Vault Quant', value: data.vaultEntries.length, icon: Lock, color: 'text-blue-500', sub: `${data.documents.length} Encrypted Records`, path: '/documents' }
           ].map((m, i) => (
             <Card
               key={i}

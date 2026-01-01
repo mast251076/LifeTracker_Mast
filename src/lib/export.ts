@@ -108,3 +108,44 @@ export const exportDataToExcel = (reportName: string = "All_Life_Tracker_Data") 
         console.error("Export failure:", error);
     }
 };
+
+export const exportInvestmentsToExcel = (context: any, reportName: string = "Investment_Portfolio") => {
+    if (!context || !context.holdings.length) return;
+
+    const wb = XLSX.utils.book_new();
+
+    // 1. Holdings Sheet
+    const holdingsData = context.holdings.map((h: any) => ({
+        Symbol: h.instrument.symbol,
+        Name: h.instrument.name,
+        Type: h.instrument.type,
+        Sector: h.instrument.sector || h.instrument.category || 'N/A',
+        Quantity: h.quantity,
+        AvgPrice: h.averagePrice,
+        CurrentPrice: h.currentPrice,
+        CurrentValue: h.currentValue,
+        PnL: h.pnl,
+        PnLPercentage: h.pnlPercentage,
+        Allocation: h.allocationPercentage
+    }));
+    const holdingsSheet = XLSX.utils.json_to_sheet(holdingsData);
+    XLSX.utils.book_append_sheet(wb, holdingsSheet, "Holdings");
+
+    // 2. Accounts Sheet
+    const accountsData = context.accounts.map((a: any) => ({
+        ID: a.id,
+        Name: a.name,
+        Source: a.source,
+        LastSynced: a.lastSynced
+    }));
+    const accountsSheet = XLSX.utils.json_to_sheet(accountsData);
+    XLSX.utils.book_append_sheet(wb, accountsSheet, "Accounts");
+
+    const fileName = `${reportName}_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+    try {
+        XLSX.writeFile(wb, fileName);
+    } catch (error) {
+        console.error("Investment export failure:", error);
+    }
+};
